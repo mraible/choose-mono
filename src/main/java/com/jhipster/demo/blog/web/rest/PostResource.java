@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,7 +35,6 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class PostResource {
 
     private final Logger log = LoggerFactory.getLogger(PostResource.class);
@@ -72,7 +70,7 @@ public class PostResource {
                     try {
                         return ResponseEntity
                             .created(new URI("/api/posts/" + result.getId()))
-                            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId()))
                             .body(result);
                     } catch (URISyntaxException e) {
                         throw new RuntimeException(e);
@@ -103,7 +101,7 @@ public class PostResource {
                 result ->
                     ResponseEntity
                         .ok()
-                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId()))
                         .body(result)
             );
     }
@@ -152,7 +150,7 @@ public class PostResource {
                 res ->
                     ResponseEntity
                         .ok()
-                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, res.getId().toString()))
+                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, res.getId()))
                         .body(res)
             );
     }
@@ -197,7 +195,7 @@ public class PostResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the post, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/posts/{id}")
-    public Mono<ResponseEntity<Post>> getPost(@PathVariable Long id) {
+    public Mono<ResponseEntity<Post>> getPost(@PathVariable String id) {
         log.debug("REST request to get Post : {}", id);
         Mono<Post> post = postRepository.findOneWithEagerRelationships(id);
         return ResponseUtil.wrapOrNotFound(post);
@@ -211,16 +209,13 @@ public class PostResource {
      */
     @DeleteMapping("/posts/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public Mono<ResponseEntity<Void>> deletePost(@PathVariable Long id) {
+    public Mono<ResponseEntity<Void>> deletePost(@PathVariable String id) {
         log.debug("REST request to delete Post : {}", id);
         return postRepository
             .deleteById(id)
             .map(
                 result ->
-                    ResponseEntity
-                        .noContent()
-                        .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-                        .build()
+                    ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id)).build()
             );
     }
 }

@@ -1,13 +1,11 @@
 package com.jhipster.demo.blog;
 
 import com.jhipster.demo.blog.BlogApp;
-import com.jhipster.demo.blog.ReactiveSqlTestContainerExtension;
 import com.jhipster.demo.blog.config.TestSecurityConfiguration;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -16,6 +14,5 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = { BlogApp.class, TestSecurityConfiguration.class })
-@ExtendWith(ReactiveSqlTestContainerExtension.class)
 public @interface IntegrationTest {
 }

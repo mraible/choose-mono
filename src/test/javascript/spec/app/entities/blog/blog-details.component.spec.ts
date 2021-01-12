@@ -40,11 +40,11 @@ describe('Component Tests', () => {
     describe('OnInit', () => {
       it('Should call load all on init', async () => {
         // GIVEN
-        const foundBlog = { id: 123 };
+        const foundBlog = { id: '123' };
         blogServiceStub.find.resolves(foundBlog);
 
         // WHEN
-        comp.retrieveBlog(123);
+        comp.retrieveBlog('123');
         await comp.$nextTick();
 
         // THEN
@@ -55,11 +55,11 @@ describe('Component Tests', () => {
     describe('Before route enter', () => {
       it('Should retrieve data', async () => {
         // GIVEN
-        const foundBlog = { id: 123 };
+        const foundBlog = { id: '123' };
         blogServiceStub.find.resolves(foundBlog);
 
         // WHEN
-        comp.beforeRouteEnter({ params: { blogId: 123 } }, null, cb => cb(comp));
+        comp.beforeRouteEnter({ params: { blogId: '123' } }, null, cb => cb(comp));
         await comp.$nextTick();
 
         // THEN

@@ -110,7 +110,7 @@ describe('Post e2e test', () => {
       .invoke('val')
       .should('match', new RegExp('../fake-data/blob/hipster.txt'));
 
-    cy.get(`[data-cy="date"]`).type('2021-01-11T08:43').invoke('val').should('equal', '2021-01-11T08:43');
+    cy.get(`[data-cy="date"]`).type('2021-01-11T12:28').invoke('val').should('equal', '2021-01-11T12:28');
 
     cy.setFieldSelectToLastOfEntity('blog');
 

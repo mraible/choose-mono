@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -36,7 +35,6 @@ import tech.jhipster.web.util.reactive.ResponseUtil;
  */
 @RestController
 @RequestMapping("/api")
-@Transactional
 public class TagResource {
 
     private final Logger log = LoggerFactory.getLogger(TagResource.class);
@@ -72,7 +70,7 @@ public class TagResource {
                     try {
                         return ResponseEntity
                             .created(new URI("/api/tags/" + result.getId()))
-                            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                            .headers(HeaderUtil.createEntityCreationAlert(applicationName, true, ENTITY_NAME, result.getId()))
                             .body(result);
                     } catch (URISyntaxException e) {
                         throw new RuntimeException(e);
@@ -103,7 +101,7 @@ public class TagResource {
                 result ->
                     ResponseEntity
                         .ok()
-                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId().toString()))
+                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, result.getId()))
                         .body(result)
             );
     }
@@ -144,7 +142,7 @@ public class TagResource {
                 res ->
                     ResponseEntity
                         .ok()
-                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, res.getId().toString()))
+                        .headers(HeaderUtil.createEntityUpdateAlert(applicationName, true, ENTITY_NAME, res.getId()))
                         .body(res)
             );
     }
@@ -184,7 +182,7 @@ public class TagResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the tag, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/tags/{id}")
-    public Mono<ResponseEntity<Tag>> getTag(@PathVariable Long id) {
+    public Mono<ResponseEntity<Tag>> getTag(@PathVariable String id) {
         log.debug("REST request to get Tag : {}", id);
         Mono<Tag> tag = tagRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(tag);
@@ -198,16 +196,13 @@ public class TagResource {
      */
     @DeleteMapping("/tags/{id}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public Mono<ResponseEntity<Void>> deleteTag(@PathVariable Long id) {
+    public Mono<ResponseEntity<Void>> deleteTag(@PathVariable String id) {
         log.debug("REST request to delete Tag : {}", id);
         return tagRepository
             .deleteById(id)
             .map(
                 result ->
-                    ResponseEntity
-                        .noContent()
-                        .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
-                        .build()
+                    ResponseEntity.noContent().headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id)).build()
             );
     }
 }

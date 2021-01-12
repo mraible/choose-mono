@@ -32,7 +32,7 @@ describe('Service Tests', () => {
     beforeEach(() => {
       service = new PostService();
       currentDate = new Date();
-      elemDefault = new Post(0, 'AAAAAAA', 'AAAAAAA', currentDate);
+      elemDefault = new Post('ID', 'AAAAAAA', 'AAAAAAA', currentDate);
     });
 
     describe('Service methods', () => {
@@ -45,7 +45,7 @@ describe('Service Tests', () => {
         );
         axiosStub.get.resolves({ data: returnedFromService });
 
-        return service.find(123).then(res => {
+        return service.find('123').then(res => {
           expect(res).toMatchObject(elemDefault);
         });
       });
@@ -53,7 +53,7 @@ describe('Service Tests', () => {
       it('should not find an element', async () => {
         axiosStub.get.rejects(error);
         return service
-          .find(123)
+          .find('123')
           .then()
           .catch(err => {
             expect(err).toMatchObject(error);
@@ -63,7 +63,7 @@ describe('Service Tests', () => {
       it('should create a Post', async () => {
         const returnedFromService = Object.assign(
           {
-            id: 0,
+            id: 'ID',
             date: dayjs(currentDate).format(DATE_TIME_FORMAT),
           },
           elemDefault
@@ -160,7 +160,7 @@ describe('Service Tests', () => {
 
       it('should delete a Post', async () => {
         axiosStub.delete.resolves({ ok: true });
-        return service.delete(123).then(res => {
+        return service.delete('123').then(res => {
           expect(res.ok).toBeTruthy();
         });
       });
@@ -169,7 +169,7 @@ describe('Service Tests', () => {
         axiosStub.delete.rejects(error);
 
         return service
-          .delete(123)
+          .delete('123')
           .then()
           .catch(err => {
             expect(err).toMatchObject(error);

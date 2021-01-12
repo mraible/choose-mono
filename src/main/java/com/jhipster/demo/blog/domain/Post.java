@@ -7,53 +7,52 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * A Post.
  */
-@Table("post")
+@Document(collection = "post")
 public class Post implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    private Long id;
+    private String id;
 
     @NotNull
-    @Column("title")
+    @Field("title")
     private String title;
 
-    @Column("content")
+    @Field("content")
     private String content;
 
     @NotNull
-    @Column("date")
+    @Field("date")
     private Instant date;
 
+    @DBRef
+    @Field("blog")
     @JsonIgnoreProperties(value = { "user" }, allowSetters = true)
-    @Transient
     private Blog blog;
 
-    @Column("blog_id")
-    private Long blogId;
-
+    @DBRef
+    @Field("tags")
     @JsonIgnoreProperties(value = { "entries" }, allowSetters = true)
-    @Transient
     private Set<Tag> tags = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Post id(Long id) {
+    public Post id(String id) {
         this.id = id;
         return this;
     }
@@ -103,21 +102,11 @@ public class Post implements Serializable {
 
     public Post blog(Blog blog) {
         this.setBlog(blog);
-        this.blogId = blog != null ? blog.getId() : null;
         return this;
     }
 
     public void setBlog(Blog blog) {
         this.blog = blog;
-        this.blogId = blog != null ? blog.getId() : null;
-    }
-
-    public Long getBlogId() {
-        return this.blogId;
-    }
-
-    public void setBlogId(Long blog) {
-        this.blogId = blog;
     }
 
     public Set<Tag> getTags() {

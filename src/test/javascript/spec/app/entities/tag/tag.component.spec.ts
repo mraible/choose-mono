@@ -51,7 +51,7 @@ describe('Component Tests', () => {
 
     it('Should call load all on init', async () => {
       // GIVEN
-      tagServiceStub.retrieve.resolves({ headers: {}, data: [{ id: 123 }] });
+      tagServiceStub.retrieve.resolves({ headers: {}, data: [{ id: '123' }] });
 
       // WHEN
       comp.retrieveAllTags();
@@ -59,12 +59,12 @@ describe('Component Tests', () => {
 
       // THEN
       expect(tagServiceStub.retrieve.called).toBeTruthy();
-      expect(comp.tags[0]).toEqual(jasmine.objectContaining({ id: 123 }));
+      expect(comp.tags[0]).toEqual(jasmine.objectContaining({ id: '123' }));
     });
 
     it('should load a page', async () => {
       // GIVEN
-      tagServiceStub.retrieve.resolves({ headers: {}, data: [{ id: 123 }] });
+      tagServiceStub.retrieve.resolves({ headers: {}, data: [{ id: '123' }] });
       comp.previousPage = 1;
 
       // WHEN
@@ -73,13 +73,13 @@ describe('Component Tests', () => {
 
       // THEN
       expect(tagServiceStub.retrieve.called).toBeTruthy();
-      expect(comp.tags[0]).toEqual(jasmine.objectContaining({ id: 123 }));
+      expect(comp.tags[0]).toEqual(jasmine.objectContaining({ id: '123' }));
     });
 
     it('should re-initialize the page', async () => {
       // GIVEN
       tagServiceStub.retrieve.reset();
-      tagServiceStub.retrieve.resolves({ headers: {}, data: [{ id: 123 }] });
+      tagServiceStub.retrieve.resolves({ headers: {}, data: [{ id: '123' }] });
 
       // WHEN
       comp.loadPage(2);
@@ -90,7 +90,7 @@ describe('Component Tests', () => {
       // THEN
       expect(tagServiceStub.retrieve.callCount).toEqual(2);
       expect(comp.page).toEqual(1);
-      expect(comp.tags[0]).toEqual(jasmine.objectContaining({ id: 123 }));
+      expect(comp.tags[0]).toEqual(jasmine.objectContaining({ id: '123' }));
     });
 
     it('should calculate the sort attribute for an id', () => {
@@ -116,7 +116,7 @@ describe('Component Tests', () => {
       tagServiceStub.delete.resolves({});
 
       // WHEN
-      comp.prepareRemove({ id: 123 });
+      comp.prepareRemove({ id: '123' });
       comp.removeTag();
       await comp.$nextTick();
 

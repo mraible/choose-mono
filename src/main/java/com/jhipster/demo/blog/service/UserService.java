@@ -19,7 +19,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -50,7 +49,6 @@ public class UserService {
      * @param langKey   language key.
      * @param imageUrl  image URL of user.
      */
-    @Transactional
     public Mono<Void> updateUser(String firstName, String lastName, String email, String langKey, String imageUrl) {
         return SecurityUtils
             .getCurrentUserLogin()
@@ -71,13 +69,7 @@ public class UserService {
             .then();
     }
 
-    @Transactional
-    Mono<User> saveUser(User user) {
-        return saveUser(user, false);
-    }
-
-    @Transactional
-    Mono<User> saveUser(User user, boolean forceCreate) {
+    private Mono<User> saveUser(User user) {
         return SecurityUtils
             .getCurrentUserLogin()
             .switchIfEmpty(Mono.just(Constants.SYSTEM))
@@ -87,50 +79,31 @@ public class UserService {
                         user.setCreatedBy(login);
                     }
                     user.setLastModifiedBy(login);
-                    // Saving the relationship can be done in an entity callback
-                    // once https://github.com/spring-projects/spring-data-r2dbc/issues/215 is done
-                    Mono<User> persistedUser;
-                    if (forceCreate) {
-                        persistedUser = userRepository.create(user);
-                    } else {
-                        persistedUser = userRepository.save(user);
-                    }
-                    return persistedUser.flatMap(
-                        savedUser ->
-                            Flux
-                                .fromIterable(user.getAuthorities())
-                                .flatMap(authority -> userRepository.saveUserAuthority(savedUser.getId(), authority.getName()))
-                                .then(Mono.just(savedUser))
-                    );
+                    return userRepository.save(user);
                 }
             );
     }
 
-    @Transactional(readOnly = true)
     public Flux<AdminUserDTO> getAllManagedUsers(Pageable pageable) {
         return userRepository.findAllByIdNotNull(pageable).map(AdminUserDTO::new);
     }
 
-    @Transactional(readOnly = true)
     public Flux<UserDTO> getAllPublicUsers(Pageable pageable) {
         return userRepository.findAllByIdNotNullAndActivatedIsTrue(pageable).map(UserDTO::new);
     }
 
-    @Transactional(readOnly = true)
     public Mono<Long> countManagedUsers() {
         return userRepository.count();
     }
 
-    @Transactional(readOnly = true)
     public Mono<User> getUserWithAuthoritiesByLogin(String login) {
-        return userRepository.findOneWithAuthoritiesByLogin(login);
+        return userRepository.findOneByLogin(login);
     }
 
     /**
      * Gets a list of all the authorities.
      * @return a list of all the authorities.
      */
-    @Transactional(readOnly = true)
     public Flux<String> getAuthorities() {
         return authorityRepository.findAll().map(Authority::getName);
     }
@@ -160,7 +133,7 @@ public class UserService {
             .doOnNext(authority -> log.debug("Saving authority '{}' in local database", authority))
             .flatMap(authorityRepository::save)
             .then(userRepository.findOneByLogin(user.getLogin()))
-            .switchIfEmpty(saveUser(user, true))
+            .switchIfEmpty(userRepository.save(user))
             .flatMap(
                 existingUser -> {
                     // if IdP sends last updated information, use it to determine if an update should happen
@@ -195,7 +168,6 @@ public class UserService {
      * @param authToken the authentication token.
      * @return the user from the authentication.
      */
-    @Transactional
     public Mono<AdminUserDTO> getUserFromAuthentication(AbstractAuthenticationToken authToken) {
         Map<String, Object> attributes;
         if (authToken instanceof OAuth2AuthenticationToken) {

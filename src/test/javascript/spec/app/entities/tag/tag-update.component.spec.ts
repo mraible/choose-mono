@@ -49,7 +49,7 @@ describe('Component Tests', () => {
     describe('save', () => {
       it('Should call update service on save for existing entity', async () => {
         // GIVEN
-        const entity = { id: 123 };
+        const entity = { id: '123' };
         comp.tag = entity;
         tagServiceStub.update.resolves(entity);
 
@@ -81,12 +81,12 @@ describe('Component Tests', () => {
     describe('Before route enter', () => {
       it('Should retrieve data', async () => {
         // GIVEN
-        const foundTag = { id: 123 };
+        const foundTag = { id: '123' };
         tagServiceStub.find.resolves(foundTag);
         tagServiceStub.retrieve.resolves([foundTag]);
 
         // WHEN
-        comp.beforeRouteEnter({ params: { tagId: 123 } }, null, cb => cb(comp));
+        comp.beforeRouteEnter({ params: { tagId: '123' } }, null, cb => cb(comp));
         await comp.$nextTick();
 
         // THEN

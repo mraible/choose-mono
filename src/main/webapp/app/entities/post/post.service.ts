@@ -7,7 +7,7 @@ import { IPost } from '@/shared/model/post.model';
 const baseApiUrl = 'api/posts';
 
 export default class PostService {
-  public find(id: number): Promise<IPost> {
+  public find(id: string): Promise<IPost> {
     return new Promise<IPost>((resolve, reject) => {
       axios
         .get(`${baseApiUrl}/${id}`)
@@ -33,7 +33,7 @@ export default class PostService {
     });
   }
 
-  public delete(id: number): Promise<any> {
+  public delete(id: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
         .delete(`${baseApiUrl}/${id}`)

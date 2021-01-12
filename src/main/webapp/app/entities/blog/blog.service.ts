@@ -5,7 +5,7 @@ import { IBlog } from '@/shared/model/blog.model';
 const baseApiUrl = 'api/blogs';
 
 export default class BlogService {
-  public find(id: number): Promise<IBlog> {
+  public find(id: string): Promise<IBlog> {
     return new Promise<IBlog>((resolve, reject) => {
       axios
         .get(`${baseApiUrl}/${id}`)
@@ -31,7 +31,7 @@ export default class BlogService {
     });
   }
 
-  public delete(id: number): Promise<any> {
+  public delete(id: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
         .delete(`${baseApiUrl}/${id}`)

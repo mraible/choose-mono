@@ -50,7 +50,7 @@ describe('Component Tests', () => {
 
     it('Should call load all on init', async () => {
       // GIVEN
-      blogServiceStub.retrieve.resolves({ headers: {}, data: [{ id: 123 }] });
+      blogServiceStub.retrieve.resolves({ headers: {}, data: [{ id: '123' }] });
 
       // WHEN
       comp.retrieveAllBlogs();
@@ -58,14 +58,14 @@ describe('Component Tests', () => {
 
       // THEN
       expect(blogServiceStub.retrieve.called).toBeTruthy();
-      expect(comp.blogs[0]).toEqual(jasmine.objectContaining({ id: 123 }));
+      expect(comp.blogs[0]).toEqual(jasmine.objectContaining({ id: '123' }));
     });
     it('Should call delete service on confirmDelete', async () => {
       // GIVEN
       blogServiceStub.delete.resolves({});
 
       // WHEN
-      comp.prepareRemove({ id: 123 });
+      comp.prepareRemove({ id: '123' });
       comp.removeBlog();
       await comp.$nextTick();
 

@@ -34,7 +34,7 @@ management:
       liveness:
         include: livenessState
       readiness:
-        include: readinessState,datasource
+        include: readinessState
     probes:
       enabled: true
     mail:

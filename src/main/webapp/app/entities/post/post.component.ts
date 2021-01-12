@@ -13,7 +13,7 @@ import PostService from './post.service';
 })
 export default class Post extends mixins(JhiDataUtils) {
   @Inject('postService') private postService: () => PostService;
-  private removeId: number = null;
+  private removeId: string = null;
   public itemsPerPage = 20;
   public queryCount: number = null;
   public page = 1;

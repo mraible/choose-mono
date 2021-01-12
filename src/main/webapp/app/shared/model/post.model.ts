@@ -2,7 +2,7 @@ import { IBlog } from '@/shared/model/blog.model';
 import { ITag } from '@/shared/model/tag.model';
 
 export interface IPost {
-  id?: number;
+  id?: string;
   title?: string;
   content?: string;
   date?: Date;
@@ -12,7 +12,7 @@ export interface IPost {
 
 export class Post implements IPost {
   constructor(
-    public id?: number,
+    public id?: string,
     public title?: string,
     public content?: string,
     public date?: Date,
