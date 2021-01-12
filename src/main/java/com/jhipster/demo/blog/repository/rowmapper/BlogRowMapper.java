@@ -28,7 +28,7 @@ public class BlogRowMapper implements BiFunction<Row, String, Blog> {
         entity.setId(converter.fromRow(row, prefix + "_id", Long.class));
         entity.setName(converter.fromRow(row, prefix + "_name", String.class));
         entity.setHandle(converter.fromRow(row, prefix + "_handle", String.class));
-        entity.setUserId(converter.fromRow(row, prefix + "_user_id", Long.class));
+        entity.setUserId(converter.fromRow(row, prefix + "_user_id", String.class));
         return entity;
     }
 }

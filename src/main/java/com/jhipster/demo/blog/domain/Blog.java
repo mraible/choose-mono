@@ -32,7 +32,7 @@ public class Blog implements Serializable {
     private User user;
 
     @Column("user_id")
-    private Long userId;
+    private String userId;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
     public Long getId() {
@@ -89,11 +89,11 @@ public class Blog implements Serializable {
         this.userId = user != null ? user.getId() : null;
     }
 
-    public Long getUserId() {
+    public String getUserId() {
         return this.userId;
     }
 
-    public void setUserId(Long user) {
+    public void setUserId(String user) {
         this.userId = user;
     }
 
