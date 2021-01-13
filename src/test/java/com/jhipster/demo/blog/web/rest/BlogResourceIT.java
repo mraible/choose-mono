@@ -8,15 +8,10 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import com.jhipster.demo.blog.IntegrationTest;
 import com.jhipster.demo.blog.domain.Blog;
 import com.jhipster.demo.blog.repository.BlogRepository;
-import com.jhipster.demo.blog.service.EntityManager;
 import java.time.Duration;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
@@ -41,9 +36,6 @@ class BlogResourceIT {
     private BlogRepository blogRepository;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private WebTestClient webTestClient;
 
     private Blog blog;
@@ -54,7 +46,7 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Blog createEntity(EntityManager em) {
+    public static Blog createEntity() {
         Blog blog = new Blog().name(DEFAULT_NAME).handle(DEFAULT_HANDLE);
         return blog;
     }
@@ -65,22 +57,9 @@ class BlogResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Blog createUpdatedEntity(EntityManager em) {
+    public static Blog createUpdatedEntity() {
         Blog blog = new Blog().name(UPDATED_NAME).handle(UPDATED_HANDLE);
         return blog;
-    }
-
-    public static void deleteEntities(EntityManager em) {
-        try {
-            em.deleteAll(Blog.class).block();
-        } catch (Exception e) {
-            // It can fail, if other entities are still referring this - it will be removed later.
-        }
-    }
-
-    @AfterEach
-    public void cleanup() {
-        deleteEntities(em);
     }
 
     @BeforeEach
@@ -90,8 +69,8 @@ class BlogResourceIT {
 
     @BeforeEach
     public void initTest() {
-        deleteEntities(em);
-        blog = createEntity(em);
+        blogRepository.deleteAll().block();
+        blog = createEntity();
     }
 
     @Test
@@ -118,7 +97,7 @@ class BlogResourceIT {
     @Test
     void createBlogWithExistingId() throws Exception {
         // Create the Blog with an existing ID
-        blog.setId(1L);
+        blog.setId("existing_id");
 
         int databaseSizeBeforeCreate = blogRepository.findAll().collectList().block().size();
 
@@ -223,7 +202,7 @@ class BlogResourceIT {
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.[*].id")
-            .value(hasItem(blog.getId().intValue()))
+            .value(hasItem(blog.getId()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME))
             .jsonPath("$.[*].handle")
@@ -247,7 +226,7 @@ class BlogResourceIT {
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.id")
-            .value(is(blog.getId().intValue()))
+            .value(is(blog.getId()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME))
             .jsonPath("$.handle")

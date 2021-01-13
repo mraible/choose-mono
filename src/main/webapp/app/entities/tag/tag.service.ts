@@ -7,7 +7,7 @@ import { ITag } from '@/shared/model/tag.model';
 const baseApiUrl = 'api/tags';
 
 export default class TagService {
-  public find(id: number): Promise<ITag> {
+  public find(id: string): Promise<ITag> {
     return new Promise<ITag>((resolve, reject) => {
       axios
         .get(`${baseApiUrl}/${id}`)
@@ -33,7 +33,7 @@ export default class TagService {
     });
   }
 
-  public delete(id: number): Promise<any> {
+  public delete(id: string): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       axios
         .delete(`${baseApiUrl}/${id}`)

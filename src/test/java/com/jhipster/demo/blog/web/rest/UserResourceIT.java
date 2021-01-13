@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 import com.jhipster.demo.blog.IntegrationTest;
-import com.jhipster.demo.blog.config.Constants;
 import com.jhipster.demo.blog.domain.Authority;
 import com.jhipster.demo.blog.domain.User;
 import com.jhipster.demo.blog.repository.UserRepository;
 import com.jhipster.demo.blog.security.AuthoritiesConstants;
-import com.jhipster.demo.blog.service.EntityManager;
 import com.jhipster.demo.blog.service.dto.AdminUserDTO;
 import com.jhipster.demo.blog.service.dto.UserDTO;
 import com.jhipster.demo.blog.service.mapper.UserMapper;
@@ -54,9 +52,6 @@ class UserResourceIT {
     private UserMapper userMapper;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private WebTestClient webTestClient;
 
     private User user;
@@ -72,53 +67,37 @@ class UserResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which has a required relationship to the User entity.
      */
-    public static User createEntity(EntityManager em) {
+    public static User createEntity() {
         User user = new User();
         user.setId(UUID.randomUUID().toString());
-        user.setLogin(DEFAULT_LOGIN + RandomStringUtils.randomAlphabetic(5));
+        user.setLogin(DEFAULT_LOGIN);
         user.setActivated(true);
-        user.setEmail(RandomStringUtils.randomAlphabetic(5) + DEFAULT_EMAIL);
+        user.setEmail(DEFAULT_EMAIL);
         user.setFirstName(DEFAULT_FIRSTNAME);
         user.setLastName(DEFAULT_LASTNAME);
         user.setImageUrl(DEFAULT_IMAGEURL);
         user.setLangKey(DEFAULT_LANGKEY);
-        user.setCreatedBy(Constants.SYSTEM);
         return user;
-    }
-
-    /**
-     * Delete all the users from the database.
-     */
-    public static void deleteEntities(EntityManager em) {
-        try {
-            em.deleteAll("jhi_user_authority").block();
-            em.deleteAll(User.class).block();
-        } catch (Exception e) {
-            // It can fail, if other entities are still referring this - it will be removed later.
-        }
     }
 
     /**
      * Setups the database with one user.
      */
-    public static User initTestUser(UserRepository userRepository, EntityManager em) {
-        userRepository.deleteAllUserAuthorities().block();
+    public static User initTestUser(UserRepository userRepository) {
         userRepository.deleteAll().block();
-        User user = createEntity(em);
-        user.setLogin(DEFAULT_LOGIN);
-        user.setEmail(DEFAULT_EMAIL);
+        User user = createEntity();
         return user;
     }
 
     @BeforeEach
     public void initTest() {
-        user = initTestUser(userRepository, em);
+        user = initTestUser(userRepository);
     }
 
     @Test
     void getAllUsers() {
         // Initialize the database
-        userRepository.create(user).block();
+        userRepository.save(user).block();
 
         // Get all the users
         AdminUserDTO foundUser = webTestClient
@@ -145,7 +124,7 @@ class UserResourceIT {
     @Test
     void getUser() {
         // Initialize the database
-        userRepository.create(user).block();
+        userRepository.save(user).block();
 
         // Get the user
         webTestClient

@@ -4,8 +4,10 @@ application {
     applicationType monolith
     authenticationType oauth2
     packageName com.jhipster.demo.blog
-    prodDatabaseType mysql
-    cacheProvider hazelcast
+    databaseType mongodb
+    devDatabaseType mongodb
+    prodDatabaseType mongodb
+    enableHibernateCache false
     buildTool maven
     clientFramework vue
     reactive true

@@ -13,7 +13,7 @@ import TagService from './tag.service';
 })
 export default class Tag extends mixins(JhiDataUtils) {
   @Inject('tagService') private tagService: () => TagService;
-  private removeId: number = null;
+  private removeId: string = null;
   public itemsPerPage = 20;
   public queryCount: number = null;
   public page = 1;

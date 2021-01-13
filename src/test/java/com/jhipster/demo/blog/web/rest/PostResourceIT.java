@@ -9,13 +9,11 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import com.jhipster.demo.blog.IntegrationTest;
 import com.jhipster.demo.blog.domain.Post;
 import com.jhipster.demo.blog.repository.PostRepository;
-import com.jhipster.demo.blog.service.EntityManager;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,9 +55,6 @@ class PostResourceIT {
     private PostRepository postRepositoryMock;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private WebTestClient webTestClient;
 
     private Post post;
@@ -70,7 +65,7 @@ class PostResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Post createEntity(EntityManager em) {
+    public static Post createEntity() {
         Post post = new Post().title(DEFAULT_TITLE).content(DEFAULT_CONTENT).date(DEFAULT_DATE);
         return post;
     }
@@ -81,23 +76,9 @@ class PostResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Post createUpdatedEntity(EntityManager em) {
+    public static Post createUpdatedEntity() {
         Post post = new Post().title(UPDATED_TITLE).content(UPDATED_CONTENT).date(UPDATED_DATE);
         return post;
-    }
-
-    public static void deleteEntities(EntityManager em) {
-        try {
-            em.deleteAll("rel_post__tag").block();
-            em.deleteAll(Post.class).block();
-        } catch (Exception e) {
-            // It can fail, if other entities are still referring this - it will be removed later.
-        }
-    }
-
-    @AfterEach
-    public void cleanup() {
-        deleteEntities(em);
     }
 
     @BeforeEach
@@ -107,8 +88,8 @@ class PostResourceIT {
 
     @BeforeEach
     public void initTest() {
-        deleteEntities(em);
-        post = createEntity(em);
+        postRepository.deleteAll().block();
+        post = createEntity();
     }
 
     @Test
@@ -136,7 +117,7 @@ class PostResourceIT {
     @Test
     void createPostWithExistingId() throws Exception {
         // Create the Post with an existing ID
-        post.setId(1L);
+        post.setId("existing_id");
 
         int databaseSizeBeforeCreate = postRepository.findAll().collectList().block().size();
 
@@ -214,7 +195,7 @@ class PostResourceIT {
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.[*].id")
-            .value(hasItem(post.getId().intValue()))
+            .value(hasItem(post.getId()))
             .jsonPath("$.[*].title")
             .value(hasItem(DEFAULT_TITLE))
             .jsonPath("$.[*].content")
@@ -258,7 +239,7 @@ class PostResourceIT {
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.id")
-            .value(is(post.getId().intValue()))
+            .value(is(post.getId()))
             .jsonPath("$.title")
             .value(is(DEFAULT_TITLE))
             .jsonPath("$.content")

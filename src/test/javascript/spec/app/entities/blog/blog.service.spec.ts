@@ -28,7 +28,7 @@ describe('Service Tests', () => {
 
     beforeEach(() => {
       service = new BlogService();
-      elemDefault = new Blog(0, 'AAAAAAA', 'AAAAAAA');
+      elemDefault = new Blog('ID', 'AAAAAAA', 'AAAAAAA');
     });
 
     describe('Service methods', () => {
@@ -36,7 +36,7 @@ describe('Service Tests', () => {
         const returnedFromService = Object.assign({}, elemDefault);
         axiosStub.get.resolves({ data: returnedFromService });
 
-        return service.find(123).then(res => {
+        return service.find('123').then(res => {
           expect(res).toMatchObject(elemDefault);
         });
       });
@@ -44,7 +44,7 @@ describe('Service Tests', () => {
       it('should not find an element', async () => {
         axiosStub.get.rejects(error);
         return service
-          .find(123)
+          .find('123')
           .then()
           .catch(err => {
             expect(err).toMatchObject(error);
@@ -54,7 +54,7 @@ describe('Service Tests', () => {
       it('should create a Blog', async () => {
         const returnedFromService = Object.assign(
           {
-            id: 0,
+            id: 'ID',
           },
           elemDefault
         );
@@ -133,7 +133,7 @@ describe('Service Tests', () => {
 
       it('should delete a Blog', async () => {
         axiosStub.delete.resolves({ ok: true });
-        return service.delete(123).then(res => {
+        return service.delete('123').then(res => {
           expect(res.ok).toBeTruthy();
         });
       });
@@ -142,7 +142,7 @@ describe('Service Tests', () => {
         axiosStub.delete.rejects(error);
 
         return service
-          .delete(123)
+          .delete('123')
           .then()
           .catch(err => {
             expect(err).toMatchObject(error);

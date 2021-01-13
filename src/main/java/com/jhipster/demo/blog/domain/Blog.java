@@ -3,47 +3,45 @@ package com.jhipster.demo.blog.domain;
 import java.io.Serializable;
 import javax.validation.constraints.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
-import org.springframework.data.relational.core.mapping.Column;
-import org.springframework.data.relational.core.mapping.Table;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * A Blog.
  */
-@Table("blog")
+@Document(collection = "blog")
 public class Blog implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    private Long id;
+    private String id;
 
     @NotNull
     @Size(min = 3)
-    @Column("name")
+    @Field("name")
     private String name;
 
     @NotNull
     @Size(min = 2)
-    @Column("handle")
+    @Field("handle")
     private String handle;
 
-    @Transient
+    @DBRef
+    @Field("user")
     private User user;
 
-    @Column("user_id")
-    private String userId;
-
     // jhipster-needle-entity-add-field - JHipster will add fields here
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
-    public Blog id(Long id) {
+    public Blog id(String id) {
         this.id = id;
         return this;
     }
@@ -80,21 +78,11 @@ public class Blog implements Serializable {
 
     public Blog user(User user) {
         this.setUser(user);
-        this.userId = user != null ? user.getId() : null;
         return this;
     }
 
     public void setUser(User user) {
         this.user = user;
-        this.userId = user != null ? user.getId() : null;
-    }
-
-    public String getUserId() {
-        return this.userId;
-    }
-
-    public void setUserId(String user) {
-        this.userId = user;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here

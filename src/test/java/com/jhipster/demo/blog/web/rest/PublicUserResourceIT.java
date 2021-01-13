@@ -4,12 +4,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.csrf;
 
 import com.jhipster.demo.blog.IntegrationTest;
-import com.jhipster.demo.blog.config.Constants;
 import com.jhipster.demo.blog.config.TestSecurityConfiguration;
 import com.jhipster.demo.blog.domain.User;
 import com.jhipster.demo.blog.repository.UserRepository;
 import com.jhipster.demo.blog.security.AuthoritiesConstants;
-import com.jhipster.demo.blog.service.EntityManager;
 import com.jhipster.demo.blog.service.dto.UserDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,9 +31,6 @@ class PublicUserResourceIT {
     private UserRepository userRepository;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private WebTestClient webTestClient;
 
     private User user;
@@ -47,13 +42,13 @@ class PublicUserResourceIT {
 
     @BeforeEach
     public void initTest() {
-        user = UserResourceIT.initTestUser(userRepository, em);
+        user = UserResourceIT.initTestUser(userRepository);
     }
 
     @Test
     void getAllPublicUsers() {
         // Initialize the database
-        userRepository.create(user).block();
+        userRepository.save(user).block();
 
         // Get all the users
         UserDTO foundUser = webTestClient

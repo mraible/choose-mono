@@ -8,15 +8,10 @@ import static org.springframework.security.test.web.reactive.server.SecurityMock
 import com.jhipster.demo.blog.IntegrationTest;
 import com.jhipster.demo.blog.domain.Tag;
 import com.jhipster.demo.blog.repository.TagRepository;
-import com.jhipster.demo.blog.service.EntityManager;
 import java.time.Duration;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
@@ -38,9 +33,6 @@ class TagResourceIT {
     private TagRepository tagRepository;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private WebTestClient webTestClient;
 
     private Tag tag;
@@ -51,7 +43,7 @@ class TagResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Tag createEntity(EntityManager em) {
+    public static Tag createEntity() {
         Tag tag = new Tag().name(DEFAULT_NAME);
         return tag;
     }
@@ -62,22 +54,9 @@ class TagResourceIT {
      * This is a static method, as tests for other entities might also need it,
      * if they test an entity which requires the current entity.
      */
-    public static Tag createUpdatedEntity(EntityManager em) {
+    public static Tag createUpdatedEntity() {
         Tag tag = new Tag().name(UPDATED_NAME);
         return tag;
-    }
-
-    public static void deleteEntities(EntityManager em) {
-        try {
-            em.deleteAll(Tag.class).block();
-        } catch (Exception e) {
-            // It can fail, if other entities are still referring this - it will be removed later.
-        }
-    }
-
-    @AfterEach
-    public void cleanup() {
-        deleteEntities(em);
     }
 
     @BeforeEach
@@ -87,8 +66,8 @@ class TagResourceIT {
 
     @BeforeEach
     public void initTest() {
-        deleteEntities(em);
-        tag = createEntity(em);
+        tagRepository.deleteAll().block();
+        tag = createEntity();
     }
 
     @Test
@@ -114,7 +93,7 @@ class TagResourceIT {
     @Test
     void createTagWithExistingId() throws Exception {
         // Create the Tag with an existing ID
-        tag.setId(1L);
+        tag.setId("existing_id");
 
         int databaseSizeBeforeCreate = tagRepository.findAll().collectList().block().size();
 
@@ -171,7 +150,7 @@ class TagResourceIT {
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.[*].id")
-            .value(hasItem(tag.getId().intValue()))
+            .value(hasItem(tag.getId()))
             .jsonPath("$.[*].name")
             .value(hasItem(DEFAULT_NAME));
     }
@@ -193,7 +172,7 @@ class TagResourceIT {
             .contentType(MediaType.APPLICATION_JSON)
             .expectBody()
             .jsonPath("$.id")
-            .value(is(tag.getId().intValue()))
+            .value(is(tag.getId()))
             .jsonPath("$.name")
             .value(is(DEFAULT_NAME));
     }

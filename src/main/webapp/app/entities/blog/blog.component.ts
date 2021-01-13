@@ -11,7 +11,7 @@ import BlogService from './blog.service';
 })
 export default class Blog extends Vue {
   @Inject('blogService') private blogService: () => BlogService;
-  private removeId: number = null;
+  private removeId: string = null;
 
   public blogs: IBlog[] = [];
 
